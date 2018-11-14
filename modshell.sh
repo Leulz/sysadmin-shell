@@ -3,8 +3,8 @@
 #todo capture EOF to leave script
 #todo echo PS1 done
 #todo append command to log
-#todo cd case skip
 #todo ignore commands: done, but what about pipe?
+#todo tab autocomplete
 
 IGNORED_COMMANDS=$(help | awk 'NR > 15 {print $1}')
 
@@ -23,6 +23,6 @@ do
   if containsElement $MAIN_COMMAND ${IGNORED_COMMANDS[@]}; then
     $CMD
   else
-    (time $CMD) 2>>/var/tmp/log
+    /usr/bin/time -f "$CMD\t%e real,\t%U user,\t%S sys" -ao /var/tmp/log bash -c "$CMD"
   fi
 done
