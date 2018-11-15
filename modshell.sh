@@ -1,9 +1,6 @@
 #!/bin/bash
 
-#todo capture EOF to leave script
 #todo append command to log: done, but where should the log be? Should it have the user's name?
-#todo ignore commands: done, but what about pipe?
-#todo tab autocomplete
 #todo empty command is being timed, probably should not be
 
 IGNORED_COMMANDS=$(help | awk 'NR > 15 {print $1}')
@@ -15,12 +12,11 @@ containsElement () {
   return 1
 }
 
-trap ''  2
+trap 'echo "Command ignored, press <<Enter>> to continue.";continue' 2
 
 while true
 do
-  echo -n `logname`@`hostname`:`dirs +0`\$" "
-	read CMD
+	read -e -p "`logname`@`hostname`:`dirs +0`\$ " CMD
   #If CMD is ^D, read will have exit code "1"
   if [[ $? == 1 ]]; then 
     trap 2
