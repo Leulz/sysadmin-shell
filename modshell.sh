@@ -2,6 +2,7 @@
 
 #todo append command to log: done, but where should the log be? Should it have the user's name?
 #todo empty command is being timed, probably should not be
+#How to deal with piped commands that have both ignored and non-ignored commands?
 
 IGNORED_COMMANDS=$(help | awk 'NR > 15 {print $1}')
 
