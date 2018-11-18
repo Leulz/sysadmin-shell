@@ -36,6 +36,11 @@ do
     break
   fi
 
+  #If CMD is empty
+  if [[ -z $CMD ]]; then
+    continue
+  fi
+
  history -s "$CMD"
 
   MAIN_COMMAND=$(echo $CMD | awk '{print $1}')
