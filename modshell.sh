@@ -1,25 +1,29 @@
-#!/bin/bash -i
-
-#todo append command to log: done, but where should the log be? Should it have the user's name?
-#todo empty command is being timed, probably should not be
-#How to deal with piped commands that have both ignored and non-ignored commands?
-
-# The following may be useful:
-# TIMEFORMAT="$CMD"$'\t%E real,\t%U user,\t%S sys'
-# exec 3>&1 4>&2
-# { time $CMD 1>&3 2>&4; } >/var/tmp/log 2>&1 
-# exec 3>&- 4>&-
-
-#Currently, when timing the command, we use the flags -c and -i. -i forces .bashrc to be loaded. 
-#Is there a better way? Also, we should load .profile too.
+#!/bin/bash
 
 IGNORED_COMMANDS=$(help | awk 'NR > 15 {print $1}')
+COMMAND_SEPARATORS=("&" "|" ";")
+
 history -c -r "$HOME/.modshell_history"
 
+#If the command to be ran is a shell builtin, it should not be timed.
+#That only happens if the command is the builtin by itself without any separator (see function below)
 containsElement () {
   local e match="$1"
   shift
   for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
+#If the command to be ran contains one of the command separators,
+#it should be timed, otherwise the user could just do something like "cd . && [...]"
+#and execute whatever he wanted without the command being written in the logs.
+containsSeparator() {
+  for sep in "${COMMAND_SEPARATORS[@]}"
+  do
+    if [[ "$1" =~ "$sep" ]]; then
+      return 0
+    fi
+  done
   return 1
 }
 
@@ -41,13 +45,13 @@ do
     continue
   fi
 
- history -s "$CMD"
+  history -s "$CMD"
 
   MAIN_COMMAND=$(echo $CMD | awk '{print $1}')
-  if containsElement $MAIN_COMMAND ${IGNORED_COMMANDS[@]}; then
+  if containsElement "$MAIN_COMMAND" "${IGNORED_COMMANDS[@]}" && ! containsSeparator "$CMD"; then
     $CMD
   else
-    /usr/bin/time -f "$CMD\t%e real,\t%U user,\t%S sys" -ao /var/tmp/log bash -ci "$CMD"
+    /usr/bin/time -f "$CMD\t%e real,\t%U user,\t%S sys" -ao /var/tmp/log bash -c "$CMD"
   fi
 done
 
