@@ -51,7 +51,8 @@ do
   if containsElement "$MAIN_COMMAND" "${IGNORED_COMMANDS[@]}" && ! containsSeparator "$CMD"; then
     $CMD
   else
-    /usr/bin/time -f "$CMD\t%e real,\t%U user,\t%S sys" -ao /var/tmp/log bash -c "$CMD"
+    MONTH_DATE=`date +\%m/%Y`
+    /usr/bin/time -f "$CMD,\t%e real,\t%U user,\t%S sys,\t$MONTH_DATE" -ao /var/tmp/log bash -c "$CMD"
   fi
 done
 
