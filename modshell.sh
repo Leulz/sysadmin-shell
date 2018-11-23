@@ -48,7 +48,7 @@ do
   history -s "$CMD"
 
   MAIN_COMMAND=$(echo $CMD | awk '{print $1}')
-  if containsElement "$MAIN_COMMAND" "${IGNORED_COMMANDS[@]}" && ! containsSeparator "$CMD"; then
+  if containsElement $MAIN_COMMAND ${IGNORED_COMMANDS[@]} && ! containsSeparator $CMD; then
     $CMD
   else
     MONTH_DATE=`date +\%m/%Y`
