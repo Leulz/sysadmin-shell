@@ -52,7 +52,7 @@ do
     $CMD
   else
     MONTH_DATE=`date +\%m/%Y`
-    /usr/bin/time -f "$CMD,\t%e real,\t%U user,\t%S sys,\t$MONTH_DATE" -ao /var/tmp/log bash -c "$CMD"
+    /usr/bin/time -f "$CMD\t%e real\t%U user\t%S sys\t$MONTH_DATE" -ao /var/tmp/log bash -c "$CMD"
   fi
 done
 
