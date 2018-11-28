@@ -31,7 +31,7 @@ trap 'echo "Command ignored, press <<Enter>> to continue.";continue' 2
 
 while true
 do
-	read -e -p "`logname`@`hostname`:`dirs +0`\$ " CMD
+	read -e -r -p "`logname`@`hostname`:`dirs +0`\$ " CMD
 
   #If CMD is ^D, read will have exit code "1"
   if [[ $? == 1 ]]; then 
